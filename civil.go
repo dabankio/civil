@@ -288,6 +288,9 @@ func (d Date) Value() (driver.Value, error) { b, _ := d.MarshalText(); return st
 
 // Scan implements the sql.Scanner interface for database deserialization.
 func (d *Date) Scan(src interface{}) error {
+	if src == nil {
+		return nil
+	}
 	var str string
 	switch v := src.(type) {
 	case string:
@@ -297,11 +300,12 @@ func (d *Date) Scan(src interface{}) error {
 	default:
 		return fmt.Errorf("scan date failed, unknown type %T", src)
 	}
-
-	x, err := ParseDate(str)
-	if err != nil {
-		return err
+	if str != "" {
+		x, err := ParseDate(str)
+		if err != nil {
+			return err
+		}
+		*d = x
 	}
-	*d = x
 	return nil
 }
