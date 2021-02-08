@@ -297,6 +297,9 @@ func (d *Date) Scan(src interface{}) error {
 		str = v
 	case []byte:
 		str = string(v)
+	case time.Time:
+		*d = DateOf(v)
+		return nil
 	default:
 		return fmt.Errorf("scan date failed, unknown type %T", src)
 	}
